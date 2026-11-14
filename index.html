@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b0d" />
+  <title>씻을까? | Huddling Club 8조</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app" id="app">
+    <header class="topbar">
+      <span class="brand">씻을까?</span>
+      <button type="button" class="ghost" id="btn-open-settings" hidden>설정</button>
+    </header>
+
+    <!-- 화면 1. 온보딩: 고정 시간 -->
+    <section class="screen" data-screen="onboarding-fixed" hidden>
+      <p class="step">온보딩 1/2</p>
+      <h1>몇 시에 집을 나가?</h1>
+      <p class="sub">출발 시각과, 씻기와 상관없이 꼭 필요한 준비 시간을 알려줘.</p>
+
+      <label class="field">
+        <span class="field-label">집에서 나갈 시각</span>
+        <input type="time" id="input-depart" required />
+      </label>
+
+      <h2>필수 준비</h2>
+      <ul class="list" id="list-fixed"></ul>
+      <p class="total" id="fixed-total"></p>
+
+      <form class="add-row" id="form-add-fixed">
+        <input name="name" type="text" placeholder="예: 짐 챙기기" maxlength="12" aria-label="필수 준비 이름" />
+        <input name="minutes" type="number" min="1" max="120" value="5" inputmode="numeric" aria-label="소요 시간(분)" />
+        <button type="submit" class="secondary">추가</button>
+      </form>
+
+      <p class="error" id="error-fixed" role="alert" hidden></p>
+      <button type="button" class="primary" id="btn-next-fixed">다음</button>
+    </section>
+
+    <!-- 화면 2. 온보딩: 씻기 체크리스트 -->
+    <section class="screen" data-screen="onboarding-wash" hidden>
+      <p class="step">온보딩 2/2</p>
+      <h1>뭘 씻을 수 있어?</h1>
+      <p class="sub">체크한 항목만 후보가 돼. 위에 있을수록 우선순위가 높아.</p>
+
+      <ul class="list" id="list-wash"></ul>
+      <p class="total" id="wash-total"></p>
+
+      <form class="add-row" id="form-add-wash">
+        <input name="name" type="text" placeholder="예: 면도" maxlength="12" aria-label="씻기 항목 이름" />
+        <input name="minutes" type="number" min="1" max="120" value="5" inputmode="numeric" aria-label="소요 시간(분)" />
+        <button type="submit" class="secondary">추가</button>
+      </form>
+
+      <p class="error" id="error-wash" role="alert" hidden></p>
+      <div class="btn-row">
+        <button type="button" class="secondary" id="btn-back-wash">이전</button>
+        <button type="button" class="primary" id="btn-finish-onboarding">설정 완료</button>
+      </div>
+    </section>
+
+    <!-- 화면 3. 홈: 씻을까? 버튼 -->
+    <section class="screen screen-home" data-screen="home" hidden>
+      <p class="sub">일어났어? 일단 눌러봐.</p>
+      <div class="clock">
+        <p class="clock-now" id="home-now">--:--</p>
+        <p class="clock-meta">
+          <span>출발 <strong id="home-depart">--:--</strong></span>
+          <span id="home-remaining"></span>
+        </p>
+      </div>
+      <button type="button" class="big-button" id="btn-wash">씻을까?</button>
+
+      <details class="dev">
+        <summary>테스트용: 현재 시각 바꿔보기</summary>
+        <div class="dev-body">
+          <input type="time" id="input-now-override" aria-label="테스트용 현재 시각" />
+          <button type="button" class="secondary" id="btn-clear-override">실제 시각으로</button>
+        </div>
+      </details>
+    </section>
+
+    <!-- 화면 4. 결과 -->
+    <section class="screen" data-screen="result" hidden>
+      <p class="chip-status" id="result-chip"></p>
+
+      <div class="copy" id="result-copy">
+        <h1 class="course" id="result-course"></h1>
+        <p class="summary" id="result-summary"></p>
+      </div>
+      <p class="detail" id="result-detail"></p>
+
+      <div class="card">
+        <h2>할 수 있는 씻기</h2>
+        <ul class="chips" id="result-done"></ul>
+      </div>
+
+      <div class="card">
+        <h2>오늘은 포기</h2>
+        <ul class="chips" id="result-excluded"></ul>
+        <p class="note" id="result-giveup"></p>
+      </div>
+
+      <div class="card">
+        <h2>예상 꼬질도</h2>
+        <div class="dirty">
+          <span class="dirty-emoji" id="dirty-emoji" aria-hidden="true"></span>
+          <div class="dirty-body">
+            <p class="dirty-label" id="dirty-label"></p>
+            <div class="meter" role="presentation"><div class="meter-fill" id="meter-fill"></div></div>
+            <p class="note" id="dirty-comment"></p>
+          </div>
+        </div>
+      </div>
+
+      <p class="nudge" id="result-nudge"></p>
+
+      <div class="tone" id="tone-toggle" role="group" aria-label="말투 선택">
+        <button type="button" data-tone="sweet" aria-pressed="false">다정하게</button>
+        <button type="button" data-tone="playful" aria-pressed="false">장난스럽게</button>
+      </div>
+      <p class="source" id="result-source"></p>
+
+      <button type="button" class="primary" id="btn-retry">처음으로</button>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
