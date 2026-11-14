@@ -11,6 +11,7 @@
 <body>
   <main class="app" id="app">
     <header class="topbar">
+      <button type="button" class="ghost" id="btn-theme" aria-label="화면 테마 전환">다크 모드</button>
       <button type="button" class="ghost" id="btn-open-settings" hidden>설정</button>
     </header>
 
@@ -110,7 +111,7 @@
 
     <!-- 화면 4. 결과 (뽀송 / 무난 / 꼬질) -->
     <section class="screen screen-result" data-screen="result" data-tier="muna" hidden>
-      <div class="heading heading-center" id="result-copy">
+      <div class="heading heading-center">
         <h1 id="result-tier">무난</h1>
         <p class="summary" id="result-summary"></p>
       </div>
@@ -131,10 +132,11 @@
       <!-- Figma 최종본에는 없지만 기능 명세(01 문서)에 있는 보조 정보는 접어서 둔다 -->
       <details class="more">
         <summary>자세히 보기</summary>
-        <div class="more-body">
+        <div class="more-body" id="result-copy">
           <p class="chip-status" id="result-chip"></p>
           <p class="detail" id="result-detail"></p>
           <p class="course" id="result-course"></p>
+          <p class="ai-summary" id="result-ai-summary"></p>
 
           <div class="card card-flat">
             <h2>오늘은 포기</h2>

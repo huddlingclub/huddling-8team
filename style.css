@@ -20,6 +20,11 @@
   --brand-ring-1: rgba(255, 196, 0, 0.32);
   --brand-ring-2: rgba(255, 196, 0, 0.16);
   --splash-ring: #ffd84d;
+  --splash-bg: #fff4cc;
+  --stage-bg: #fff4cc; /* 결과 화면 펭귄 뒤 원. 캐릭터 윤곽이 어두워서 다크에서도 밝게 둔다 */
+  --track: rgba(33, 33, 36, 0.08);
+  --subtle: #555d6d; /* 결과 화면 한 줄 문구 */
+  color-scheme: light;
 
   /* 출발 정보 강조(주황) — DG DESIGN.md 의 SEED Primary */
   --accent: #ff6f0f;
@@ -38,6 +43,48 @@
   --motion-slow: 350ms;
   --ease-enter: cubic-bezier(0, 0, 0.2, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 다크 모드: DG DESIGN.md 의 "반전이 아니라 토큰 재매핑" 원칙. 브랜드 노랑은 그대로 두고 중립색만 바꾼다.
+   기기 설정(prefers-color-scheme)을 따르되, 사용자가 버튼으로 고르면(data-theme) 그 값이 우선한다. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --canvas: #1c1c1f;
+    --background: #111113;
+    --surface: #26262a;
+    --hairline: #34343a;
+    --foreground: #f4f4f6;
+    --muted: #9a9aa3;
+    --disabled-bg: #44444b;
+    --disabled-fg: #6b6b73;
+    --brand-tint: rgba(255, 196, 0, 0.16);
+    --accent: #ff8a3d;
+    --splash-bg: #231f10;
+    --track: rgba(255, 255, 255, 0.12);
+    --subtle: #b4b8c2;
+    --home-bg: var(--stage-bg);
+    --home-pad: 12px;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --canvas: #1c1c1f;
+  --background: #111113;
+  --surface: #26262a;
+  --hairline: #34343a;
+  --foreground: #f4f4f6;
+  --muted: #9a9aa3;
+  --disabled-bg: #44444b;
+  --disabled-fg: #6b6b73;
+  --brand-tint: rgba(255, 196, 0, 0.16);
+  --accent: #ff8a3d;
+  --splash-bg: #231f10;
+  --track: rgba(255, 255, 255, 0.12);
+  --subtle: #b4b8c2;
+  --home-bg: var(--stage-bg);
+  --home-pad: 12px;
+  color-scheme: dark;
 }
 
 * {
@@ -85,8 +132,16 @@ body {
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   min-height: 48px;
+}
+
+.topbar .ghost:only-child {
+  margin-left: 0;
+}
+
+#btn-open-settings {
+  margin-left: auto;
 }
 
 .screen {
@@ -117,7 +172,7 @@ body {
   transition: opacity var(--motion-standard) var(--ease-standard);
 }
 
-.heading-center.is-loading {
+.more-body.is-loading {
   opacity: 0.45;
 }
 
@@ -436,9 +491,13 @@ input::placeholder {
   font-variant-numeric: tabular-nums;
 }
 
+/* 다크 모드에서는 캐릭터 윤곽이 묻히지 않도록 연한 노랑 원 위에 올린다 */
 .home-penguin {
   width: 144px;
   height: auto;
+  padding: var(--home-pad, 0);
+  border-radius: 50%;
+  background: var(--home-bg, transparent);
 }
 
 .home-copy {
@@ -505,32 +564,45 @@ input::placeholder {
   margin-top: 8px;
 }
 
-/* 결과 */
+/* 결과: 제목 → 한 줄 → 펭귄 원 → 칩 → 꼬질도 카드 → 버튼 (Figma 시안 간격) */
 .screen-result {
-  gap: 16px;
+  gap: 28px;
+  padding-top: 72px;
+}
+
+.screen-result h1 {
+  font-size: 28px;
 }
 
 .summary {
   margin: 0;
-  color: var(--muted);
-  font-size: 16px;
+  color: var(--subtle);
+  font-size: 17px;
 }
 
-/* 단계별 강조색: 뽀송(노랑) · 무난(노랑) · 꼬질(노랑) 모두 같은 원 배경 */
+/* 펭귄 원 뒤 배경. 그림은 원보다 크게 놓아 소품(문·반짝이)이 원 밖으로 나온다 */
 .penguin-stage {
   display: grid;
   place-items: center;
-  width: 176px;
-  height: 176px;
-  margin: 0 auto;
+  width: 208px;
+  height: 208px;
+  margin: 4px auto 0;
   border-radius: 50%;
-  background: var(--brand-tint);
+  background: var(--stage-bg);
 }
 
 .penguin-stage img {
-  width: 82%;
-  height: 82%;
-  object-fit: contain;
+  width: 100%;
+  height: auto;
+  max-width: none;
+}
+
+.screen-result[data-tier='kkojil'] .penguin-stage img {
+  width: 94%;
+}
+
+.screen-result[data-tier='ppoyung'] .penguin-stage img {
+  width: 114%;
 }
 
 .chips {
@@ -585,7 +657,7 @@ input::placeholder {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 16px;
+  padding: 20px;
   background: var(--surface);
   border-radius: var(--radius-lg);
 }
@@ -657,6 +729,10 @@ input::placeholder {
   font-variant-numeric: tabular-nums;
 }
 
+.ai-summary {
+  margin: 0;
+}
+
 .course {
   margin: 0;
   color: var(--accent);
@@ -690,7 +766,7 @@ input::placeholder {
 
 /* 스플래시: 연한 노랑 전체 배경 + 링 속 펭귄 + 불러오는 막대 (Figma 최종본) */
 .app:has(.screen-splash:not([hidden])) {
-  background: var(--brand-tint);
+  background: var(--splash-bg);
 }
 
 .screen-splash {
@@ -727,7 +803,7 @@ input::placeholder {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: var(--canvas);
+  background: #ffffff;
 }
 
 .splash-disc img {
@@ -761,7 +837,7 @@ input::placeholder {
   height: 4px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(33, 33, 36, 0.08);
+  background: var(--track);
 }
 
 .splash-bar span {
