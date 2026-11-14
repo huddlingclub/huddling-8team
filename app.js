@@ -391,7 +391,7 @@ function renderFixedList() {
     )
   );
   const total = sumMinutes(state.draft.fixedPrep);
-  $('#fixed-total').textContent = `필수 준비 합계 ${total}분`;
+  $('#fixed-total').replaceChildren('필수 준비 합계', el('strong', {}, `${total}분`));
 }
 
 function renderFixedStep() {
@@ -480,7 +480,7 @@ function renderWashList() {
     )
   );
   const total = sumMinutes(sorted.filter((item) => item.enabled));
-  $('#wash-total').textContent = `선택한 씻기 합계 ${total}분`;
+  $('#wash-total').replaceChildren('선택한 씻기 전체', el('strong', {}, `${total}분`));
 }
 
 function renderWashStep() {
@@ -616,6 +616,9 @@ function getResultTier(plan) {
   return {
     key: tier.key,
     title: tier.title,
+    label: tier.label,
+    emoji: tier.emoji,
+    comment: tier.comment,
     image: isLate ? DATA.LATE_IMAGE.image : tier.image,
     alt: isLate ? DATA.LATE_IMAGE.alt : tier.alt
   };
@@ -638,9 +641,9 @@ function renderResultNumbers(plan) {
   renderItemList('#result-excluded', plan.excludedItems, '포기할 항목 없음', true);
 
   $('#meter-fill').style.width = `${plan.dirtyScore}%`;
-  $('#dirty-emoji').textContent = plan.dirtyLevel.emoji;
-  $('#dirty-label').textContent = `${plan.dirtyLevel.label} (${plan.dirtyScore}%)`;
-  $('#dirty-comment').textContent = plan.dirtyLevel.comment;
+  $('#dirty-emoji').textContent = tier.emoji;
+  $('#dirty-label').textContent = `${tier.label} (${plan.dirtyScore}%)`;
+  $('#dirty-comment').textContent = tier.comment;
 }
 
 function syncToneButtons() {
@@ -723,12 +726,17 @@ function initApp() {
   $('#input-now-override').addEventListener('input', handleNowOverride);
   $('#btn-clear-override').addEventListener('click', clearNowOverride);
 
-  if (state.settings) {
-    showScreen('home');
-  } else {
-    state.draft = cloneSettings(DATA.DEFAULT_SETTINGS);
-    renderFixedStep();
-  }
+  // 스플래시를 잠깐 보여준 뒤, 설정이 있으면 홈으로, 없으면 온보딩으로 넘어간다.
+  document.documentElement.style.setProperty('--splash-ms', `${DATA.SPLASH_MS}ms`);
+  showScreen('splash');
+  setTimeout(() => {
+    if (state.settings) {
+      showScreen('home');
+    } else {
+      state.draft = cloneSettings(DATA.DEFAULT_SETTINGS);
+      renderFixedStep();
+    }
+  }, DATA.SPLASH_MS);
 }
 
 if (typeof document !== 'undefined') {

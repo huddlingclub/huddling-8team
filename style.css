@@ -19,6 +19,7 @@
   --brand-tint: #fff4cc;
   --brand-ring-1: rgba(255, 196, 0, 0.32);
   --brand-ring-2: rgba(255, 196, 0, 0.16);
+  --splash-ring: #ffd84d;
 
   /* 출발 정보 강조(주황) — DG DESIGN.md 의 SEED Primary */
   --accent: #ff6f0f;
@@ -149,6 +150,11 @@ h2 {
   text-align: right;
 }
 
+.total strong {
+  margin-left: 4px;
+  color: var(--foreground);
+}
+
 .error {
   margin: 0;
   color: var(--error);
@@ -257,6 +263,11 @@ input[type='time'] {
   color: var(--foreground);
   font: inherit;
   letter-spacing: inherit;
+}
+
+/* 시간 입력칸의 시계 아이콘은 Figma 에 없어서 숨긴다 (직접 입력·모바일 선택기는 그대로 동작) */
+input[type='time']::-webkit-calendar-picker-indicator {
+  display: none;
 }
 
 input::placeholder {
@@ -675,6 +686,111 @@ input::placeholder {
 .source {
   text-align: center;
   font-size: 12px;
+}
+
+/* 스플래시: 연한 노랑 전체 배경 + 링 속 펭귄 + 불러오는 막대 (Figma 최종본) */
+.app:has(.screen-splash:not([hidden])) {
+  background: var(--brand-tint);
+}
+
+.screen-splash {
+  align-items: center;
+  gap: 0;
+  padding-top: 112px;
+  text-align: center;
+}
+
+.splash-ring {
+  display: grid;
+  place-items: center;
+  width: 220px;
+  height: 220px;
+  border: 14px solid var(--splash-ring);
+  border-radius: 50%;
+  box-shadow: 0 0 0 18px var(--brand-ring-2);
+  animation: splash-breathe 2s var(--ease-standard) infinite;
+}
+
+@keyframes splash-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 12px var(--brand-ring-2);
+  }
+  50% {
+    box-shadow: 0 0 0 24px var(--brand-ring-2);
+  }
+}
+
+.splash-disc {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--canvas);
+}
+
+.splash-disc img {
+  width: 64%;
+  height: auto;
+}
+
+.splash-copy {
+  margin-top: 40px;
+}
+
+.splash-title {
+  margin: 0 0 8px;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.splash-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-bottom: 16px;
+}
+
+.splash-bar {
+  width: 144px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(33, 33, 36, 0.08);
+}
+
+.splash-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--brand);
+  animation: splash-load var(--splash-ms, 1600ms) var(--ease-standard) forwards;
+}
+
+@keyframes splash-load {
+  from {
+    width: 8%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.splash-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.splash-brand {
+  margin: 0;
+  color: var(--disabled-fg);
+  font-size: 11px;
 }
 
 /* 움직임 줄이기 설정을 켠 사용자: 모든 모션을 즉시 처리 (DG DESIGN.md) */
