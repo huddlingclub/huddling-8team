@@ -11,6 +11,9 @@ const SSITGGA_DATA = {
   // 'greedy': 안 들어가는 항목은 건너뛰고, 뒤의 작은 항목이 들어가면 계속 채운다
   FILL_STRATEGY: 'strict',
 
+  // 스플래시를 보여주는 시간(ms). 막대 채우기 모션 길이와 같다.
+  SPLASH_MS: 1600,
+
   // 서버 AI 호출을 기다리는 최대 시간(ms). 넘으면 기본 문구로 즉시 보여준다.
   API_TIMEOUT_MS: 2500,
   API_URL: '/api/message',
@@ -49,9 +52,10 @@ const SSITGGA_DATA = {
   // 결과 화면 단계 (Figma 최종본: 뽀송 / 무난 / 꼬질). dirtyScore <= max 인 첫 단계.
   // 출발 시각이 지났거나 필수 준비도 부족하면(status: passed·short) lateImage 를 대신 쓴다.
   RESULT_TIERS: [
-    { key: 'ppoyung', max: 20, title: '뽀송', image: 'assets/penguin/result-ppoyung.png', alt: '베레모와 선글라스로 외출하는 펭귄' },
-    { key: 'muna', max: 60, title: '무난', image: 'assets/penguin/result-muna.png', alt: '수건을 두르고 뿌듯해하는 펭귄' },
-    { key: 'kkojil', max: 100, title: '꼬질', image: 'assets/penguin/result-kkojil.png', alt: '졸린 눈으로 퍼져 있는 펭귄' }
+    // label·emoji·comment: 결과 카드의 "예상 꼬질도" 표시 (Figma 최종본). 위 DIRTY_LEVELS 5단계와는 별개다.
+    { key: 'ppoyung', max: 20, title: '뽀송', label: '최상', emoji: '🤩', comment: '가까이와도 돼요', image: 'assets/penguin/result-ppoyung.png', alt: '베레모와 선글라스로 외출하는 펭귄' },
+    { key: 'muna', max: 60, title: '무난', label: '무난', emoji: '🙂', comment: '적당한 거리를 두어요', image: 'assets/penguin/result-muna.png', alt: '수건을 두르고 뿌듯해하는 펭귄' },
+    { key: 'kkojil', max: 100, title: '꼬질', label: '심각', emoji: '🥵', comment: '가까이만 안 가면 괜찮음', image: 'assets/penguin/result-kkojil.png', alt: '졸린 눈으로 퍼져 있는 펭귄' }
   ],
   LATE_IMAGE: { image: 'assets/penguin/late-rush.png', alt: '허둥지둥 뛰어나가는 펭귄' },
 
