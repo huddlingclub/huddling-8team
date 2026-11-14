@@ -480,7 +480,7 @@ function renderWashList() {
     )
   );
   const total = sumMinutes(sorted.filter((item) => item.enabled));
-  $('#wash-total').textContent = `선택한 씻기 전체 ${total}분`;
+  $('#wash-total').textContent = `선택한 씻기 합계 ${total}분`;
 }
 
 function renderWashStep() {
@@ -609,7 +609,25 @@ function renderCopy(copy, source) {
   $('#result-copy').classList.remove('is-loading');
 }
 
+// 꼬질도에 맞는 결과 단계(뽀송·무난·꼬질)와 펭귄 그림을 고른다.
+function getResultTier(plan) {
+  const tier = DATA.RESULT_TIERS.find((entry) => plan.dirtyScore <= entry.max);
+  const isLate = plan.status === 'passed' || plan.status === 'short';
+  return {
+    key: tier.key,
+    title: tier.title,
+    image: isLate ? DATA.LATE_IMAGE.image : tier.image,
+    alt: isLate ? DATA.LATE_IMAGE.alt : tier.alt
+  };
+}
+
 function renderResultNumbers(plan) {
+  const tier = getResultTier(plan);
+  $('[data-screen="result"]').dataset.tier = tier.key;
+  $('#result-tier').textContent = tier.title;
+  $('#result-image').src = tier.image;
+  $('#result-image').alt = tier.alt;
+
   // 시간·항목은 항상 앱의 계산값만 쓴다. (AI 응답은 문구에만 사용)
   $('#result-detail').textContent =
     plan.status === 'passed'
@@ -723,6 +741,7 @@ if (typeof module !== 'undefined' && module.exports) {
     formatTime,
     getRemainingMinutes,
     calculatePlan,
+    getResultTier,
     buildFallbackCopy,
     buildApiPayload,
     isValidSettings,

@@ -46,6 +46,15 @@ const SSITGGA_DATA = {
     { max: 100, label: '동굴 거주자', emoji: '🦧', comment: '오늘은 거리두기 모드' }
   ],
 
+  // 결과 화면 단계 (Figma 최종본: 뽀송 / 무난 / 꼬질). dirtyScore <= max 인 첫 단계.
+  // 출발 시각이 지났거나 필수 준비도 부족하면(status: passed·short) lateImage 를 대신 쓴다.
+  RESULT_TIERS: [
+    { key: 'ppoyung', max: 20, title: '뽀송', image: 'assets/penguin/result-ppoyung.png', alt: '베레모와 선글라스로 외출하는 펭귄' },
+    { key: 'muna', max: 60, title: '무난', image: 'assets/penguin/result-muna.png', alt: '수건을 두르고 뿌듯해하는 펭귄' },
+    { key: 'kkojil', max: 100, title: '꼬질', image: 'assets/penguin/result-kkojil.png', alt: '졸린 눈으로 퍼져 있는 펭귄' }
+  ],
+  LATE_IMAGE: { image: 'assets/penguin/late-rush.png', alt: '허둥지둥 뛰어나가는 펭귄' },
+
   // AI 가 실패하거나 늦을 때 보여줄 기본 문구
   // 치환 변수: {last} 마지막으로 하는 항목, {excludedTopic} 포기 항목+은/는, {short} 부족한 분, {slack} 여유 분
   FALLBACK_COPY: {
