@@ -337,7 +337,7 @@ function showScreen(name) {
   document.querySelectorAll('.screen').forEach((screen) => {
     screen.hidden = screen.dataset.screen !== name;
   });
-  $('#btn-open-settings').hidden = !(name === 'home' || name === 'result');
+  $('#btn-open-settings').hidden = name !== 'home'; // 결과 화면에는 설정 버튼이 없다 (Figma)
   if (name === 'home') {
     renderHome();
     startClock();
@@ -357,6 +357,44 @@ function stopClock() {
     clearInterval(state.clockTimer);
     state.clockTimer = null;
   }
+}
+
+/* ---- 다크 모드 ---- */
+
+// 사용자가 고른 테마가 있으면 그것을, 없으면 기기 설정(prefers-color-scheme)을 따른다.
+function isDarkNow() {
+  const forced = document.documentElement.dataset.theme;
+  if (forced) {
+    return forced === 'dark';
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function syncThemeButton() {
+  $('#btn-theme').textContent = isDarkNow() ? '라이트 모드' : '다크 모드';
+}
+
+function loadTheme() {
+  try {
+    const saved = localStorage.getItem(DATA.THEME_KEY);
+    if (saved === 'light' || saved === 'dark') {
+      document.documentElement.dataset.theme = saved;
+    }
+  } catch (error) {
+    // 저장소를 못 읽어도 기기 설정으로 보여주면 되므로 무시한다.
+  }
+  syncThemeButton();
+}
+
+function toggleTheme() {
+  const next = isDarkNow() ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  try {
+    localStorage.setItem(DATA.THEME_KEY, next);
+  } catch (error) {
+    // 저장이 막혀도 이번 방문에는 바뀐 테마로 계속 쓴다.
+  }
+  syncThemeButton();
 }
 
 function showError(selector, message) {
@@ -602,7 +640,7 @@ function renderSlack(plan) {
 
 function renderCopy(copy, source) {
   $('#result-course').textContent = copy.courseName;
-  $('#result-summary').textContent = copy.summary;
+  $('#result-ai-summary').textContent = copy.summary; // AI·기본 한 줄 안내는 "자세히 보기" 안에 둔다
   $('#result-giveup').textContent = copy.giveUpNote;
   $('#result-nudge').textContent = copy.nudge;
   $('#result-source').textContent = source === 'ai' ? 'AI가 쓴 문구' : '기본 문구';
@@ -616,6 +654,7 @@ function getResultTier(plan) {
   return {
     key: tier.key,
     title: tier.title,
+    tagline: tier.tagline,
     label: tier.label,
     emoji: tier.emoji,
     comment: tier.comment,
@@ -628,6 +667,7 @@ function renderResultNumbers(plan) {
   const tier = getResultTier(plan);
   $('[data-screen="result"]').dataset.tier = tier.key;
   $('#result-tier').textContent = tier.title;
+  $('#result-summary').textContent = tier.tagline; // Figma 최종본의 단계별 고정 문구
   $('#result-image').src = tier.image;
   $('#result-image').alt = tier.alt;
 
@@ -707,6 +747,8 @@ function clearNowOverride() {
 
 function initApp() {
   state.settings = loadSettings();
+  loadTheme();
+  $('#btn-theme').addEventListener('click', toggleTheme);
 
   $('#list-fixed').addEventListener('click', handleFixedClick);
   $('#form-add-fixed').addEventListener('submit', handleAddFixed);
@@ -730,6 +772,10 @@ function initApp() {
   document.documentElement.style.setProperty('--splash-ms', `${DATA.SPLASH_MS}ms`);
   showScreen('splash');
   setTimeout(() => {
+    // 스플래시 중에 사용자가 이미 다른 화면으로 이동했다면 덮어쓰지 않는다.
+    if ($('[data-screen="splash"]').hidden) {
+      return;
+    }
     if (state.settings) {
       showScreen('home');
     } else {
